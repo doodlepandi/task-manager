@@ -5,7 +5,7 @@ function response() {
         status,
         message,
         data,
-        err: null
+        // err: null
       })
     },
     fail: (res, status, message = '', err = {}) => {
@@ -19,8 +19,24 @@ function response() {
       return res.status(status).json({
         status,
         message,
-        data: null,
+        // data: null,
         err
+      })
+    },
+    joierrors(res, err) {
+
+      let error = err.details.reduce((prev, curr) => {
+        prev[curr.path[0]] = curr.message.replace(/"/g, '');
+        return prev;
+      }, {});
+      let message = 'Bad Request';
+      let status = 400
+
+      return res.status(status).json({
+        status,
+        message,
+        // data: null,
+        err: error
       })
     }
   }

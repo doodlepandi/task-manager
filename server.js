@@ -14,8 +14,6 @@ process.on('SIGINT', () => {
   process.exit(1)
 })
 
-console.log("process.env.NODE_ENV-->>", process.env.NODE_ENV);
-
 app.listen(port, () => {
   info(chalk.blue(' [ ✓ ] ') + `Application - Process ${process.pid} is listening to all incoming requests at: ${port} `);
 })

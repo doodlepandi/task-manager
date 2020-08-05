@@ -27,11 +27,11 @@ const userSchema = new Schema({
   },
   emailVerificationStatus: {
     type: Number,
-    default: 0 // 0 - Account not verified , 1-verified  
+    default: 1 // 0 - Account not verified , 1-verified  
   },
   status: {
     type: Number,
-    default: 0 // 1-active, 2-inactive, 3 -delete
+    default: 1 // 1-active, 2-inactive, 3 -delete
   }
 }, {
   timestamps: true

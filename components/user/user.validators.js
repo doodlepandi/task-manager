@@ -1,38 +1,39 @@
 // // base joi 
-// const BaseJoi = require('joi');
-// // joi date extension 
-// const Extension = require('joi-date-extensions');
-// const Joi = BaseJoi.extend(Extension);
+const BaseJoi = require('joi');
+// joi date extension 
+const Extension = require('joi-date-extensions');
+const Joi = BaseJoi.extend(Extension);
 
-const Joi = require('joi');
+// const Joi = require('joi');
 
 // handling the joi response 
 const Response = require('../../utils/response');
 
 // add joi schema 
 const schemas = {
-  startRide: Joi.object().keys({
-    query: {
-      lat: Joi.string().required(),
-      lng: Joi.string().required(),
-      journeyDate: Joi.string().required()
-    },
-    params: {
-      scheduleId: Joi.number().integer().min(1).label('Schedule Id').required(),
-    }
+  managerSignup: Joi.object().keys({
+    email: Joi.string().email().trim().required(),
+    fullName: Joi.string().required(),
+    password: Joi.string().required(),
+    userType: Joi.number().integer().label('User type').optional(),
   }),
-  stopRide: Joi.object().keys({
-    query: {
-      status: Joi.number().required(),
-      journeyDate: Joi.string().required()
-    },
-    params: {
-      scheduleId: Joi.number().integer().min(1).label('Schedule Id').required(),
-    }
+  workerSignup: Joi.object().keys({
+    email: Joi.string().email().trim().required(),
+    fullName: Joi.string().required(),
+    password: Joi.string().required(),
+    userType: Joi.number().integer().label('User type').optional(),
   }),
-  getChannel: Joi.object().keys({
-    scheduleId: Joi.number().integer().min(1).label('Schedule Id').required()
+  login: Joi.object().keys({
+    email: Joi.string().email().trim().required(),
+    password: Joi.string().required()
   }),
+  passwordChange: Joi.object().keys({
+    oldPassword: Joi.string().required(),
+    newPassword: Joi.string().required()
+  }),
+  profileUpdate: Joi.object().keys({
+    fullName: Joi.string().required()
+  })
 };
 
 const options = {
@@ -56,61 +57,74 @@ const options = {
 
 module.exports = {
   // exports validate admin signin 
-  startRide: (req, res, next) => {
+  managerSignup: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.startRide;
+    let schema = schemas.managerSignup;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate({ query: req.query, }, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
-  stopRide: (req, res, next) => {
+  workerSignup: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.stopRide;
+    let schema = schemas.workerSignup;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate({ query: req.query, }, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
-  getChannel: (req, res, next) => {
+  login: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.getChannel;
+    let schema = schemas.login;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate(req.params, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
+  passwordChange: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.passwordChange;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  },
+  profileUpdate: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.profileUpdate;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  }
 }
