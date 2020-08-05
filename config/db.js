@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 const { log, error, info } = require('../utils').logging
 
 function connectDb() {
-  mongoose.connect(process.env.DBuri)
+
+  mongoose.connect(process.env.DBuri, { useNewUrlParser: true, useUnifiedTopology: true })
 
   mongoose.connection.on('connected', function () {
     log('Mongoose default connection is open to ', process.env.DBuri)
