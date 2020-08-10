@@ -101,10 +101,15 @@ function componentOneCtrl(model) {
           status: {
             $ne: 3 // deleted
           }
-        }).select('fullName email userType password')
+        }).select('fullName email userType password status')
 
         if (userData === null) {
           return fail(res, 400, "User not found")
+        }
+        else {
+          if (userData.status == 2) {
+            return fail(res, 400, "User deactivated by manager")
+          }
         }
 
         let validPassword = userData.validPassword(req.body.password);
@@ -124,7 +129,7 @@ function componentOneCtrl(model) {
           },
 
 
-          token = jwt.sign(user, process.env.SECRET_KEY),
+          token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: '24h' }),
           newUserData = doc;
 
         // Limit Data
@@ -162,9 +167,6 @@ function componentOneCtrl(model) {
     async changePassword(req, res) {
 
       try {
-
-        console.log("req.user", req.user);
-
         // Get User Details
         let currentUser = await userModel.findOne({
           _id: req.user._id
@@ -218,7 +220,99 @@ function componentOneCtrl(model) {
 
         return fail(res, 500, err)
       }
+    },
+
+    async activateUser(req, res) {
+
+      try {
+
+        // Get User Details
+        let currentUser = await userModel.findOne({
+          _id: req.body.userId,
+          userType: 2
+        })
+
+        if (!currentUser) {
+          return fail(res, 400, 'User Not Found');
+        }
+
+        // Set New Password
+        currentUser.status = 1;
+        let updatedData = await currentUser.save()
+
+        return success(res, 200, `User activated Successfully`);
+
+      } catch (err) {
+        console.log("err", err);
+
+        return fail(res, 500, err)
+      }
+    },
+
+    async deactivateUser(req, res) {
+
+      try {
+
+        // Get User Details
+        let currentUser = await userModel.findOne({
+          _id: req.body.userId,
+          userType: 2
+        })
+
+        if (!currentUser) {
+          return fail(res, 400, 'User Not Found');
+        }
+
+        // Set New Password
+        currentUser.status = 2;
+        let updatedData = await currentUser.save()
+
+        return success(res, 200, `User deactivated Successfully`);
+
+      } catch (err) {
+        console.log("err", err);
+
+        return fail(res, 500, err)
+      }
+    },
+
+    workersList: async (req, res) => {
+      try {
+
+        // let limit = req.query.limit ? parseInt(req.query.limit) : 10
+        // let page = Math.max(0, req.query.page)
+
+        let getWorkersList = await userModel.find({
+          userType: 2,
+          // status: 1
+        })
+          // .limit(limit)
+          // .skip(limit * page)
+          .select('_id fullName email userType loggedIn status')
+
+        return success(res, 200, "workers list", getWorkersList)
+      } catch (e) {
+        console.log("e", e);
+        return fail(res, 500, e)
+      }
+    },
+
+    workersDropdown: async (req, res) => {
+      try {
+
+        let getWorkersList = await userModel.find({
+          userType: 2,
+          status: 1
+        })
+          .select('_id fullName email')
+
+        return success(res, 200, "workers list", getWorkersList)
+      } catch (e) {
+        console.log("e", e);
+        return fail(res, 500, e)
+      }
     }
+
   }
   return Object.freeze(methods)
 }

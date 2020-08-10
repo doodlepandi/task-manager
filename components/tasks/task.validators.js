@@ -1,37 +1,47 @@
 // // base joi 
-// const BaseJoi = require('joi');
-// // joi date extension 
-// const Extension = require('joi-date-extensions');
-// const Joi = BaseJoi.extend(Extension);
+const BaseJoi = require('joi');
+// joi date extension 
+const Extension = require('joi-date-extensions');
+const Joi = BaseJoi.extend(Extension);
 
-const Joi = require('joi');
+// const Joi = require('joi');
 
 // handling the joi response 
 const Response = require('../../utils/response');
 
 // add joi schema 
 const schemas = {
-  startRide: Joi.object().keys({
-    query: {
-      lat: Joi.string().required(),
-      lng: Joi.string().required(),
-      journeyDate: Joi.string().required()
-    },
-    params: {
-      scheduleId: Joi.number().integer().min(1).label('Schedule Id').required(),
-    }
+  addTask: Joi.object().keys({
+    taskTitle: Joi.string().required(),
+    taskDescription: Joi.string().required(),
+    taskExpiryAt: Joi.date().required(),
+    userId: Joi.string().label('User id').required(),
+    taskPoints: Joi.number().label('taskPoints').required()
   }),
-  stopRide: Joi.object().keys({
-    query: {
-      status: Joi.number().required(),
-      journeyDate: Joi.string().required()
-    },
-    params: {
-      scheduleId: Joi.number().integer().min(1).label('Schedule Id').required(),
-    }
+  updateTask: Joi.object().keys({
+    taskId: Joi.string().required(),
+    taskTitle: Joi.string().required(),
+    taskDescription: Joi.string().required(),
+    taskExpiryAt: Joi.date().required(),
+    userId: Joi.string().label('User id').required(),
+    taskPoints: Joi.number().label('taskPoints').required()
   }),
-  getChannel: Joi.object().keys({
-    scheduleId: Joi.number().integer().min(1).label('Schedule Id').required()
+  taskDelete: Joi.object().keys({
+    taskId: Joi.string().required()
+  }),
+  acceptTask: Joi.object().keys({
+    taskId: Joi.string().required()
+  }),
+  deleteTask: Joi.object().keys({
+    taskId: Joi.string().required()
+  }),
+  approveTask: Joi.object().keys({
+    taskId: Joi.string().required(),
+    comments: Joi.string().required()
+  }),
+  rejectTask: Joi.object().keys({
+    taskId: Joi.string().required(),
+    comments: Joi.string().required()
   }),
 };
 
@@ -56,61 +66,88 @@ const options = {
 
 module.exports = {
   // exports validate admin signin 
-  startRide: (req, res, next) => {
+  addTask: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.startRide;
+    let schema = schemas.addTask;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate({ query: req.query, }, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
-  stopRide: (req, res, next) => {
+  updateTask: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.stopRide;
+    let schema = schemas.updateTask;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate({ query: req.query, }, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
-  getChannel: (req, res, next) => {
+  acceptTask: (req, res, next) => {
     // getting the schemas 
-    let schema = schemas.getChannel;
+    let schema = schemas.acceptTask;
     let option = options.basic;
 
     // validating the schema 
-    schema.validate(req.params, option).then(() => {
+    schema.validate(req.body, option).then(() => {
       next();
       // if error occured
     }).catch((err) => {
-      let error = [];
-      err.details.forEach(element => {
-        error.push(element.message);
-      });
-
       // returning the response 
-      Response.joierrors(req, res, err);
+      Response.joierrors(res, err);
     });
   },
+  deleteTask: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.deleteTask;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  },
+  approveTask: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.approveTask;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  },
+  rejectTask: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.rejectTask;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  }
 }

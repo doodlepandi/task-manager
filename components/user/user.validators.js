@@ -33,6 +33,12 @@ const schemas = {
   }),
   profileUpdate: Joi.object().keys({
     fullName: Joi.string().required()
+  }),
+  activateUser: Joi.object().keys({
+    userId: Joi.string().required()
+  }),
+  deactivateUser: Joi.object().keys({
+    userId: Joi.string().required()
   })
 };
 
@@ -116,6 +122,34 @@ module.exports = {
   profileUpdate: (req, res, next) => {
     // getting the schemas 
     let schema = schemas.profileUpdate;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  },
+  activateUser: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.activateUser;
+    let option = options.basic;
+
+    // validating the schema 
+    schema.validate(req.body, option).then(() => {
+      next();
+      // if error occured
+    }).catch((err) => {
+      // returning the response 
+      Response.joierrors(res, err);
+    });
+  },
+  deactivateUser: (req, res, next) => {
+    // getting the schemas 
+    let schema = schemas.deactivateUser;
     let option = options.basic;
 
     // validating the schema 

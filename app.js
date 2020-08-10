@@ -35,6 +35,10 @@ app.use((req, res, next) => {
 })
 app.use(cors())
 
+
+//public folder 
+app.use('/public', express.static('public'));
+
 /* Apply error handlers to app */
 require('./utils').errorHandler(app)
 

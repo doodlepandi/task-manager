@@ -2,7 +2,7 @@ const mongoose = require('mongoose'),
   bcrypt = require('bcrypt-nodejs'),
   Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const taskSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'users'
@@ -14,12 +14,27 @@ const userSchema = new Schema({
   taskDescription: {
     type: String
   },
-  loggedIn: {
+  managerComments: {
+    type: String
+  },
+  workerComments: {
+    type: String
+  },
+  workerAttachments: [{
+    type: String
+  }],
+  taskExpiryAt: {
     type: Date
+  },
+  taskAssignedAt: {
+    type: Date
+  },
+  taskPoints: {
+    type: Number
   },
   taskStatus: {
     type: Number,
-    default: 0 // 0 - Assigned , 1-Accepted, 2- in porgress , 3 - completed  
+    default: 1 // 1 - Assigned , 2-Accepted, 3 - completed, 4 - accepted by admin , 5 - rejected by admin    
   },
   status: {
     type: Number,
@@ -33,16 +48,7 @@ const userSchema = new Schema({
   timestamps: true
 });
 
-//method to encrypt password
-userSchema.methods.generateHash = function (password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
 
-//method to decrypt password
-userSchema.methods.validPassword = function (password) {
-  var userData = this;
-  return bcrypt.compareSync(password, userData.password);
-};
-const user = mongoose.model('tasks', userSchema);
+const task = mongoose.model('tasks', taskSchema);
 
-module.exports = user;
+module.exports = task;

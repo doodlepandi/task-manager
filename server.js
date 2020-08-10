@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const cluster = require('cluster')
 const numCPUs = require('os').cpus().length || 1
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 2156
 const app = require('./app')
 const { log, info, error } = require('./utils').logging
 const chalk = require('chalk');
